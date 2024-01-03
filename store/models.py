@@ -48,3 +48,63 @@ from django.contrib.auth.models import User
 
 #     def __str__(self):
 #         return self.address
+
+CharFieldLength = 50
+
+class User(models.Model):
+    username = models.CharField(max_length=CharFieldLength)
+    password = models.CharField(max_length=CharFieldLength)
+    email = models.CharField(max_length=CharFieldLength)
+    firstname = models.CharField(max_length=CharFieldLength)
+    lastname = models.CharField(max_length=CharFieldLength)
+
+class ShippingAddress(models.Model):
+    address = models.CharField(max_length=CharFieldLength)
+    city = models.CharField(max_length=CharFieldLength)
+    state = models.CharField(max_length=CharFieldLength)
+    zip_code = models.IntegerField()
+    date_added = models.DateTimeField(auto_now_add=True)
+
+class Product(models.Model):
+    name = models.CharField(max_length=CharFieldLength)
+    description = models.TextField()
+    price = models.FloatField()
+    stock_quantity = models.IntegerField()
+    brand = models.CharField(max_length=CharFieldLength)
+
+class Category(models.Model):
+    name = models.CharField(max_length=CharFieldLength)
+    # M-M with Product
+    product = models.ManyToManyField(Product) 
+
+class Cart(models.Model):
+    # O-O with User  
+    user = models.OneToOneField(User, on_delete=models.CASCADE)  
+
+class CartItem(models.Model):
+    quantity = models.IntegerField()
+    # M-O with Cart
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    # M-O with Product
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+class Order(models.Model):
+    order_date = models.DateTimeField(auto_now_add=True)
+    total_amount = models.FloatField()
+    # M-O with User
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # M-O with ShippingAddress (on_delete option to be changed)
+    shipping_address = models.ForeignKey(ShippingAddress, on_delete=models.CASCADE)
+
+class OrderItem(models.Model):
+    quantity = models.IntegerField()
+    subtotal = models.FloatField()
+    # M-O with Order
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    # M-O with Product
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+
+
+
+
+
