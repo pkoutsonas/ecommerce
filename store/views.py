@@ -18,9 +18,18 @@ def checkout(request):
     return render(request, 'store/checkout.html', context)
 
 def category(request):
-    choice = request.GET.get('choice', '')
-    id = Category.objects.get(name=choice)
+    q = request.GET.get('q', '')
+    id = Category.objects.get(name=q)
+
     products = Product.objects.filter(category_id=id)
+    categories = Category.objects.all()
+    context = {'products' : products, 'categories' : categories}
+    return render(request, 'store/store.html', context)
+
+def search(request):
+    q = request.GET.get('q', '')
+
+    products = Product.objects.filter(name__icontains=q)
     categories = Category.objects.all()
     context = {'products' : products, 'categories' : categories}
     return render(request, 'store/store.html', context)
