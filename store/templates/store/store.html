@@ -1,24 +1,39 @@
 {% extends 'store/main.html' %} {% load static %} {% block content %}
 <div class="row">
-	{% for product in products %}
-	<div class="col-lg-4">
-		<div class="thumbnail-wrapper">
-			{% if product.image %}
-			<img class="thumbnail" src="{{product.image.url}}" />
-			{% else %}
-			<img src="{% static 'images/placeholder.png' %}" class="thumbnail" />
-			{% endif %}
-		</div>
-		<div class="box-element product">
-			<h6><strong>{{product.name}}</strong></h6>
-			<hr />
-			<button class="btn btn-outline-secondary add-btn">Add to Cart</button>
-			<a class="btn btn-outline-success" href="#">View</a>
-			<h4 style="display: inline-block; float: right;">
-				<strong>${{product.price|floatformat:2}}</strong>
-			</h4>
+	<div class="col-lg-2 category-wrapper">
+		<h2>Categories</h2>
+		<ul class="list-group">
+			{% for category in categories %}
+			<a href="{% url 'category' %}?choice={{category.name}}">
+				<li class="list-group-item category"><strong>{{category.name}}</strong></li>
+			</a>
+			{% endfor %}
+		</ul>
+	</div>
+	<div class="col-lg-8" >
+		<div class="row">
+			{% for product in products %}
+			<div class="col-lg-4">
+				<div class="thumbnail-wrapper">
+					{% if product.image %}
+					<img class="thumbnail" src="{{product.image.url}}" />
+					{% else %}
+					<img src="{% static 'images/placeholder.png' %}" class="thumbnail" />
+					{% endif %}
+				</div>
+				<div class="box-element product">
+					<h6><strong>{{product.name}}</strong></h6>
+					<hr />
+					<button class="btn btn-outline-secondary add-btn">Add to Cart</button>
+					<a class="btn btn-outline-success" href="#">View</a>
+					<h4 style="display: inline-block; float: right;">
+						<strong>${{product.price|floatformat:2}}</strong>
+					</h4>
+				</div>
+			</div>
+			{% endfor %}
 		</div>
 	</div>
-	{% endfor %}
 </div>
+
 {% endblock content %}
