@@ -3,6 +3,22 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+class Cart(models.Model):
+    number_of_items = models.IntegerField()
+
+
+class User(models.Model):
+    cart = models.OneToOneField(Cart, null=True, blank=True, on_delete=models.CASCADE)
+    username = models.CharField(max_length=200)
+    password = models.CharField(max_length=200)
+    email = models.CharField(max_length=200)
+
+
+class Guest(models.Model):
+    cart = models.OneToOneField(Cart, null=True, blank=True, on_delete=models.CASCADE)
+    cookie = models.IntegerField()
+
+
 class Customer(models.Model):
     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=200, null=True)
@@ -27,6 +43,12 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
+    quantity = models.IntegerField()
 
 
 class Order(models.Model):
