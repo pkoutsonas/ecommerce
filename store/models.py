@@ -11,7 +11,15 @@ class Customer(models.Model):
     def __str__(self):
         return self.name
     
+class Category(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
+
 class Product(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=200)
     price = models.FloatField()
     digital = models.BooleanField(default=False, blank=True, null=True)
@@ -19,6 +27,7 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True,blank=True)
