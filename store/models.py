@@ -27,9 +27,15 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+class Brand(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
 
 class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
+    brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=200)
     price = models.FloatField()
     digital = models.BooleanField(default=False, blank=True, null=True)

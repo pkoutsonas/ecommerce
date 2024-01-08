@@ -30,9 +30,9 @@ def cookie_and_cart(request):
     return cookie_var, cart_instance
 
 # build store with provided filtered products/categories
-def build_store_cookie(request, products, categories):
+def build_store_cookie(request, products, categories, brands):
     cookie_value, cart_instance = cookie_and_cart(request)
-    context = {'products' : products, 'categories' : categories, 'cart' : cart_instance}
+    context = {'products' : products, 'categories' : categories, 'cart' : cart_instance, 'brands' : brands}
     response = render(request, 'store/store.html', context)
     response.set_cookie('user_cookie', cookie_value)
 
@@ -89,8 +89,9 @@ def register(request):
 def store(request):
     products = Product.objects.all()
     categories = Category.objects.all()
+    brands = Brand.objects.all()
 
-    return build_store_cookie(request, products, categories)
+    return build_store_cookie(request, products, categories, brands)
 
 def category(request):
     q = request.GET.get('q', '')
@@ -98,13 +99,15 @@ def category(request):
 
     products = Product.objects.filter(category_id=id)
     categories = Category.objects.all()
+    brands = Brand.objects.all()
 
-    return build_store_cookie(request, products, categories)
+    return build_store_cookie(request, products, categories, brands)
 
 def search(request):
     q = request.GET.get('q', '')
 
     products = Product.objects.filter(name__icontains=q)
     categories = Category.objects.all()
+    brands = Brand.objects.all()
 
-    return build_store_cookie(request, products, categories)
+    return build_store_cookie(request, products, categories, brands)
