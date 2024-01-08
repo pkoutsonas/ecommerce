@@ -123,3 +123,8 @@ h6 {
 .hidden {
   display: none !important;
 }
+
+#login-logo {
+  font-size: 40px;
+  font-weight: bolder;
+}

@@ -4,14 +4,8 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 class Cart(models.Model):
-    number_of_items = models.IntegerField()
-
-
-class User(models.Model):
-    cart = models.OneToOneField(Cart, null=True, blank=True, on_delete=models.CASCADE)
-    username = models.CharField(max_length=200)
-    password = models.CharField(max_length=200)
-    email = models.CharField(max_length=200)
+    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
+    number_of_items = models.PositiveIntegerField()
 
 
 class Guest(models.Model):
@@ -48,7 +42,7 @@ class Product(models.Model):
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True, blank=True)
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
-    quantity = models.IntegerField()
+    quantity = models.PositiveIntegerField()
 
 
 class Order(models.Model):
