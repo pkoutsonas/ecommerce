@@ -42,7 +42,6 @@ def build_store_cookie(request, products, categories, brands):
 ############################### Create your views here. ###############################
 
 def cart(request):
-<<<<<<< HEAD
     if request.user.is_authenticated:
         customer = request.user.customer
         order, created = Order.objects.get_or_create()
@@ -50,10 +49,8 @@ def cart(request):
     else:
         items = []
     context={'items':items}
-=======
     context={}
 
->>>>>>> origin/main
     return render(request, 'store/cart.html', context)
 
 def checkout(request):
