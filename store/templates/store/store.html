@@ -1,9 +1,10 @@
 {% extends 'store/main.html' %} {% load static %} {% block content %}
 <!-- Search Bar -->
 <div class="container  text-center">
-	<form action="{% url 'search' %}" method="get">
+	<form action="{% url 'search' %}" method="post">
+		{% csrf_token %}
 		<div class="form-group d-inline-flex mb-3">
-			<input class="form-control me-2" name="q" type="search" placeholder="Search" aria-label="Search">
+			<input class="form-control me-2" name="searchField" type="search" placeholder="Search" aria-label="Search">
 			<button class="btn btn-outline-success me-2" type="submit">Search</button>
 			<button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">Filters</button>
 		</div>
@@ -15,7 +16,7 @@
 					<ul class="list-group">
 						{% for category in categories %}
 						<li class="list-group-item d-flex justify-content-start">
-							<input class="me-2" type="checkbox" id="{{category.name}}" name="{{category.name}}">
+							<input class="me-2" type="checkbox" id="{{category.name}}" name="{{category.name}}" value="on">
 							<label for="{{category.name}}">{{category.name}}</label>
 						</li>
 						{% endfor %}
@@ -26,7 +27,7 @@
 					<ul class="list-group">
 						{% for brand in brands %}
 						<li class="list-group-item d-flex justify-content-start">
-							<input class="me-2" type="checkbox" id="{{brand.name}}" name="{{brand.name}}">
+							<input class="me-2" type="checkbox" id="{{brand.name}}" name="{{brand.name}}" value="on">
 							<label for="{{brand.name}}">{{brand.name}}</label>
 						</li>
 						{% endfor %}
@@ -39,7 +40,7 @@
 					<label for="priceEnd">Up to:</label>
 					<input type="number" class="form-control mb-3" id="priceEnd" name="priceEnd" placeholder="~" step="0.01" min="0" max="100000">
 					<label class="me-2" for="availability"><h4>Available</h4></label>
-					<input type="checkbox" id="availability" name="availability">
+					<input type="checkbox" id="availability" name="availability" value="on">
 				</div>
 			</div>
 	  	</div>

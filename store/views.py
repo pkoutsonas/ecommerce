@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
+from django.db.models import Q
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import *
@@ -30,8 +31,10 @@ def cookie_and_cart(request):
     return cookie_var, cart_instance
 
 # build store with provided filtered products/categories
-def build_store_cookie(request, products, categories, brands):
+def build_store_cookie(request, products):
     cookie_value, cart_instance = cookie_and_cart(request)
+    categories = Category.objects.all()
+    brands = Brand.objects.all()
     context = {'products' : products, 'categories' : categories, 'cart' : cart_instance, 'brands' : brands}
     response = render(request, 'store/store.html', context)
     response.set_cookie('user_cookie', cookie_value)
@@ -88,26 +91,50 @@ def register(request):
 
 def store(request):
     products = Product.objects.all()
-    categories = Category.objects.all()
-    brands = Brand.objects.all()
 
-    return build_store_cookie(request, products, categories, brands)
+    return build_store_cookie(request, products)
 
 def category(request):
     q = request.GET.get('q', '')
     id = Category.objects.get(name=q)
 
     products = Product.objects.filter(category_id=id)
-    categories = Category.objects.all()
-    brands = Brand.objects.all()
 
-    return build_store_cookie(request, products, categories, brands)
+    return build_store_cookie(request, products)
 
 def search(request):
-    q = request.GET.get('q', '')
+    # Query for searchField
+    searchField = request.POST["searchField"]
+    products = Product.objects.filter(name__icontains=searchField)
 
-    products = Product.objects.filter(name__icontains=q)
-    categories = Category.objects.all()
-    brands = Brand.objects.all()
+    # Query for categories
+    categoryQueryList = []
+    for instance in Category.objects.all():
+        field_value = request.POST.get(instance.name, '')
+        if field_value:
+            id = Category.objects.get(name=instance.name)
+            categoryQueryList.append(id.id)
+    if categoryQueryList:
+        products = products.filter(category__id__in=categoryQueryList)
 
-    return build_store_cookie(request, products, categories, brands)
+    # Query for brands
+    brandQueryList = []
+    for instance in Brand.objects.all():
+        field_value = request.POST.get(instance.name, '')
+        if field_value:
+            id = Brand.objects.get(name=instance.name)
+            brandQueryList.append(id.id)
+    if brandQueryList:
+        products = products.filter(brand__id__in=brandQueryList)
+
+    # Query for price range and availability
+    priceStart = request.POST.get("priceStart", "")
+    if priceStart:
+        products = products.filter(price__gte=float(priceStart))
+    priceEnd = request.POST.get("priceEnd", "")
+    if priceEnd:
+        products = products.filter(price__lte=float(priceEnd))
+    if request.POST.get("availability", ""):
+        products = products.filter(stock__gt=0)
+
+    return build_store_cookie(request, products)
