@@ -38,6 +38,7 @@ class Product(models.Model):
     brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=200)
     price = models.FloatField()
+    stock = models.PositiveIntegerField()
     digital = models.BooleanField(default=False, blank=True, null=True)
     image = models.ImageField(null=True, blank=True)
 
