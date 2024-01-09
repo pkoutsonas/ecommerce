@@ -1,0 +1,88 @@
+{% extends 'store/main.html' %} {% load static %} {% block content %}
+<!-- Product Info -->
+<div class="row d-flex justify-content-center">
+    <div class="col-lg-3">
+        {% if product.image %}
+        <img src="{{product.image.url}}" class="img-fluid img-thumbnail rounded">
+        {% else %}
+        <img src="{% static 'images/placeholder.png' %}" alt="" class="img-fluid rounded">
+        {% endif %}
+    </div>
+    <div class="col-lg-4">
+        <h4 class="mb-3">{{product.name}}</h4>
+        <button class="btn btn-success add-btn mb-3">Add to Cart</button>
+        <div class="row">
+            <div class="col-sm-2 text-end">
+                <h5>Category:</h5>
+                <h5>Brand:</h5>
+                <h5>Stock:</h5>
+                <h5>Price:</h5>
+                <h5>Average rating:</h5>
+            </div>
+            <div class="col">
+                <h5>{{product.category.name}}</h5>
+                <h5>{{product.brand.name}}</h5>
+                <h5>{{product.stock}}</h5>
+                <h5>{{product.price}}</h5>
+                <h5>{{avg_rating.rating__avg}} stars</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8 mt-5">
+        <h5>Description</h5>
+        {{product.description}}
+    </div>
+</div>
+
+<div class="row-lg-4 d-flex justify-content-center mt-5">
+    <div class="col-lg-4">
+        <h2 class="mb-4">Write a Review</h2>
+        
+        <form method="post" action="{% url 'submit_review' %}">
+            {% csrf_token %}
+            
+            <!-- User Name -->
+            <div class="form-group">
+                <label for="userName">Your Name:</label>
+                <input type="text" class="form-control" id="userName" name="userName" required>
+            </div>
+
+            <!-- Review Text -->
+            <div class="form-group">
+                <label for="reviewText">Your Review:</label>
+                <textarea class="form-control" id="reviewText" name="reviewText" rows="4" required></textarea>
+            </div>
+
+            <!-- Rating -->
+            <div class="form-group">
+                <label for="rating">Rating:</label>
+                <select class="form-control" id="rating" name="rating" required>
+                    <option value="5">5 stars</option>
+                    <option value="4">4 stars</option>
+                    <option value="3">3 stars</option>
+                    <option value="2">2 stars</option>
+                    <option value="1">1 star</option>
+                </select>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary">Submit Review</button>
+        </form>
+
+        <!-- Comments -->
+        {% for review in reviews %}
+        <div class="card text-dark bg-light mt-3">
+            <div class="card-body">
+                <h5 class="card-title">{{review.user.username}}</h5>
+                <p class="card-text">{{review.comment}}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">Rating: {{review.rating}}/5</small>
+                    <small class="text-muted">Date: January 1, 2024</small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}
