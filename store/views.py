@@ -115,6 +115,11 @@ def submit_review(request):
 
     return store(request)
 
+def add_to_cart(request):
+    q = request.GET.get('q', '')
+
+    return
+
 # Store template
 
 def store(request):
