@@ -1,34 +1,34 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from django.db.models import Q
+from django.db.models import Avg
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import *
 from .forms import *
+import secrets
 
-# Return session variable 'cookie_var' 
-def update_cookie_session(request):
-    cookie_var = request.session.get('cookie_var', None)
+def generate_random_cookie():
+    while True:
+        # Generate a random cookie value
+        random_cookie_value = secrets.token_hex(16)
 
-    if cookie_var is None:
-        cookie_var = 1
-    
-    request.session['cookie_var'] = cookie_var + 1
-    return cookie_var
+        # Check if the generated value is unique
+        if not Guest.objects.filter(cookie=random_cookie_value).exists():
+            return random_cookie_value
+
 
 # Returns cookie value and cart instance 
 def cookie_and_cart(request):
-    cookie_value = request.COOKIES.get('user_cookie', None)
-    if cookie_value is None:
-        cart_instance = Cart.objects.create(number_of_items=0)
-        cookie_var = update_cookie_session(request)
-        Guest.objects.create(cart=cart_instance ,cookie=cookie_var)
-    else:
+    cookie_value = request.COOKIES.get('user_cookie', '')
+    if cookie_value:
         guest_instance = Guest.objects.get(cookie=cookie_value)
-        cart_instance = guest_instance.cart        
-        cookie_var = cookie_value
+        cart_instance = guest_instance.cart
+    else:
+        cart_instance = Cart.objects.create(number_of_items=0)
+        cookie_value = generate_random_cookie()
+        Guest.objects.create(cart=cart_instance ,cookie=cookie_value)        
 
-    return cookie_var, cart_instance
+    return cookie_value, cart_instance
 
 # build store with provided filtered products/categories
 def build_store_cookie(request, products):
@@ -98,6 +98,22 @@ def register(request):
         form = RegistrationForm()
 
     return render(request, 'store/register.html', {'form': form})
+
+def product(request):
+    q = request.GET.get('q', '')
+    
+    product = Product.objects.get(id=q)
+    cookie_value, cart = cookie_and_cart(request)
+    reviews = Review.objects.filter(product__id=q)
+    avg_rating = reviews.aggregate(Avg("rating", default=0))
+    context = {'product' : product, 'cart' : cart, 'reviews' : reviews, 'avg_rating' : avg_rating}
+
+    return render(request, 'store/product.html', context)
+
+def submit_review(request):
+    context = []
+
+    return store(request)
 
 # Store template
 

@@ -10,7 +10,7 @@ class Cart(models.Model):
 
 class Guest(models.Model):
     cart = models.OneToOneField(Cart, null=True, blank=True, on_delete=models.CASCADE)
-    cookie = models.IntegerField()
+    cookie = models.CharField(max_length=32, unique=True)
 
 
 class Customer(models.Model):
@@ -41,10 +41,26 @@ class Product(models.Model):
     stock = models.PositiveIntegerField()
     digital = models.BooleanField(default=False, blank=True, null=True)
     image = models.ImageField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.name
 
+
+class Review(models.Model):
+    RATING_CHOICES = [
+        (1, '1'),
+        (2, '2'),
+        (3, '3'),
+        (4, '4'),
+        (5, '5'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
+    rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
+    comment = models.TextField()
+    date_added = models.DateTimeField(auto_now_add=True)
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True, blank=True)
