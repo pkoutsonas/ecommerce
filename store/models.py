@@ -42,6 +42,7 @@ class Product(models.Model):
     digital = models.BooleanField(default=False, blank=True, null=True)
     image = models.ImageField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
+    stock = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
